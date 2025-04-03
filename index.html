@@ -77,6 +77,7 @@
             background-color: #f8f9fa;
             overflow-y: auto;
             z-index: 1;
+            text-align: left;
         }
         
         .scenario {
@@ -124,6 +125,65 @@
             display: flex;
             justify-content: space-between;
             margin-top: 20px;
+        }
+        
+        /* NEW STYLING FOR ANSWERS */
+        .answer-header {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 1.2em;
+            text-align: center;
+        }
+        
+        .answer-section {
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .card-back ul, .card-back ol {
+            padding-left: 25px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .card-back li {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .key-term {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        
+        .reference {
+            font-style: italic;
+            color: #7f8c8d;
+            margin-top: 15px;
+            font-size: 0.9em;
+            text-align: right;
+        }
+        
+        /* Add spacing to paragraphs */
+        .card-back p {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        /* Highlight important terms */
+        .card-back strong {
+            color: #2c3e50;
         }
         
         @media (max-width: 600px) {
@@ -202,6 +262,59 @@
         const prevBtn = document.getElementById('prevBtn');
         const resetBtn = document.getElementById('resetBtn');
         
+        // Function to improve answer formatting
+        function enhanceAnswerFormat(html) {
+            // Check if the content already has our custom styling
+            if (html.includes('answer-header')) {
+                return html;
+            }
+            
+            // Add header
+            let enhanced = '<div class="answer-header">ANSWER</div><div class="answer-section">';
+            
+            // Process the original content
+            let content = html;
+            
+            // Replace <h3>ANSWER:</h3> if it exists
+            content = content.replace(/<h3>ANSWER:<\/h3>/, '');
+            
+            // Enhance important terms
+            const termsToHighlight = [
+                'systemic embolization', 'embolic stroke', 'acute cholecystitis', 
+                'acute ischemic stroke', 'hyperuricemia', 'immediately', 
+                'caution', 'warning', 'remember', 'important', 'critical',
+                'prioritize', 'contraindicated', 'hypokalemia', 'hyponatremia',
+                'hypercalcemia', 'hyperglycemia'
+            ];
+            
+            termsToHighlight.forEach(term => {
+                const regex = new RegExp(`\\b${term}\\b`, 'gi');
+                content = content.replace(regex, match => 
+                    `<span class="key-term">${match}</span>`);
+            });
+            
+            // Format sections (look for patterns like "Immediate Nursing Actions:")
+            const sectionRegex = /([A-Z][A-Za-z\s]+):/g;
+            content = content.replace(sectionRegex, match => 
+                `<div class="section-title">${match.slice(0, -1)}</div>`);
+            
+            // Add the processed content
+            enhanced += content;
+            
+            // Close the answer section
+            enhanced += '</div>';
+            
+            // Look for references and style them
+            const refRegex = /(Reference:.*|Ch\.\s*\d+.*|pg\..*)/i;
+            const refMatch = html.match(refRegex);
+            if (refMatch) {
+                enhanced = enhanced.replace(refMatch[0], '');
+                enhanced += `<p class="reference">${refMatch[0]}</p>`;
+            }
+            
+            return enhanced;
+        }
+        
         // Function to update the displayed flashcard
         function updateCard() {
             if (filteredCards.length === 0) {
@@ -219,7 +332,9 @@
             cardTypeElement.textContent = card.type;
             scenarioElement.innerHTML = `<strong>CLINICAL SCENARIO:</strong><br>${card.scenario}`;
             questionElement.textContent = card.question;
-            cardBackElement.innerHTML = card.answer;
+            
+            // Apply enhanced formatting to the answer
+            cardBackElement.innerHTML = enhanceAnswerFormat(card.answer);
             
             // Make sure the card is showing the front
             flashcardElement.classList.remove('flipped');
