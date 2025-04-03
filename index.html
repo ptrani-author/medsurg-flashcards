@@ -185,7 +185,7 @@
       padding: 25px 30px;
       text-align: left;
       overscroll-behavior: contain; /* Prevent pull-to-refresh */
-      transform: translateZ(0); /* NEW FIX: Create new rendering context */
+      /* Removed the global transform: translateZ(0) */
     }
     
     .section-title {
@@ -280,6 +280,10 @@
       }
       .category-selector {
         width: 100%;
+      }
+      /* Apply the transform only on mobile devices */
+      .answer-content {
+        transform: translateZ(0);
       }
     }
     
