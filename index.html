@@ -136,11 +136,19 @@
     <div class="controls">
         <select id="categorySelector" class="category-selector">
             <option value="all">Tutte le categorie</option>
-            <option value="cardiovascolare">Sistema Cardiovascolare</option>
-            <option value="respiratorio">Sistema Respiratorio</option>
-            <option value="gastrointestinale">Sistema Gastrointestinale</option>
-            <option value="endocrino">Sistema Endocrino</option>
-            <option value="neurologico">Sistema Neurologico</option>
+            <option value="cardiovascular">Sistema Cardiovascolare</option>
+            <option value="respiratory">Sistema Respiratorio</option>
+            <option value="gastrointestinal">Sistema Gastrointestinale</option>
+            <option value="renal">Sistema Renale</option>
+            <option value="reproductive">Sistema Riproduttivo</option>
+            <option value="endocrine">Sistema Endocrino</option>
+            <option value="integumentary">Sistema Tegumentario</option>
+            <option value="musculoskeletal">Sistema Muscoloscheletrico</option>
+            <option value="immune">Sistema Immunitario</option>
+            <option value="nervous">Sistema Nervoso</option>
+            <option value="assessment">Valutazione Infermieristica</option>
+            <option value="fluids">Fluidi ed Elettroliti</option>
+            <option value="pharmacology">Farmacologia</option>
         </select>
         <button id="resetBtn" class="btn">Ricomincia</button>
     </div>
@@ -148,37 +156,11 @@
     <div id="flashcard" class="flashcard">
         <div class="card-inner">
             <div class="card-front">
-                <span class="card-type">Cardiovascolare</span>
-                <div class="scenario">
-                    <strong>SCENARIO CLINICO:</strong><br>
-                    Un paziente di 68 anni con storia di infarto miocardico si presenta al pronto soccorso con dispnea progressiva, ortopnea, edema agli arti inferiori e aumento di peso di 3 kg nell'ultima settimana.
-                </div>
-                <div class="question">
-                    Quali segni/sintomi indicherebbero un peggioramento dell'insufficienza cardiaca sinistra che richiede intervento immediato?
-                </div>
+                <span class="card-type"></span>
+                <div class="scenario"></div>
+                <div class="question"></div>
             </div>
-            <div class="card-back">
-                <h3>RISPOSTA:</h3>
-                <p>I segni/sintomi di peggioramento dell'insufficienza cardiaca sinistra che richiedono intervento immediato includono:</p>
-                <ul>
-                    <li>Dispnea a riposo o in rapido peggioramento</li>
-                    <li>Ortopnea severa (necessità di dormire con 3+ cuscini)</li>
-                    <li>Crepitii polmonari all'auscultazione</li>
-                    <li>Distensione delle vene giugulari</li>
-                    <li>Saturazione di ossigeno in calo (&lt;90%)</li>
-                    <li>Tachipnea (&gt;24 respiri/min)</li>
-                    <li>Segni di shock cardiogeno (ipotensione, estremità fredde)</li>
-                </ul>
-                <h4>INTERVENTI PRIORITARI:</h4>
-                <ol>
-                    <li>Posizionamento semi-Fowler</li>
-                    <li>Somministrazione di ossigeno</li>
-                    <li>Monitoraggio dei segni vitali</li>
-                    <li>Diuretici endovena come prescritto</li>
-                    <li>Monitoraggio dell'equilibrio idrico</li>
-                </ol>
-                <p><em>Riferimento: Cap. 4, pag. 87-89</em></p>
-            </div>
+            <div class="card-back"></div>
         </div>
     </div>
     
@@ -187,12 +169,12 @@
         <button id="nextBtn" class="btn">Successiva</button>
     </div>
     
+    <!-- Prima carica i file delle flashcard esterni -->
+    <script src="flashcards-batch1.js"></script>
+    <script src="flashcards.js"></script>
+    
+    <!-- Poi esegui lo script principale -->
     <script>
-        
-
-        <script src="flashcards-batch1.js"></script>
-        <script src="flashcards.js"></script>
-        
         let currentIndex = 0;
         let filteredCards = [...flashcards];
         
