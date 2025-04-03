@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEDSURG-BC Flashcard</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .category-selector {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            width: 200px;
+        }
+        
+        .flashcard {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            min-height: 300px;
+            position: relative;
+            cursor: pointer;
+            perspective: 1000px;
+            margin-bottom: 20px;
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .flashcard.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .card-front {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-back {
+            transform: rotateY(180deg);
+            background-color: #f8f9fa;
+            overflow-y: auto;
+        }
+        
+        .scenario {
+            background-color: #e9f7fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .question {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-top: auto;
+            padding: 15px;
+        }
+        
+        .card-type {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+        
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .flashcard {
+                min-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>MEDSURG-BC Flashcard</h1>
+    
+    <div class="controls">
+        <select id="categorySelector" class="category-selector">
+            <option value="all">Tutte le categorie</option>
+            <option value="cardiovascolare">Sistema Cardiovascolare</option>
+            <option value="respiratorio">Sistema Respiratorio</option>
+            <option value="gastrointestinale">Sistema Gastrointestinale</option>
+            <option value="endocrino">Sistema Endocrino</option>
+            <option value="neurologico">Sistema Neurologico</option>
+        </select>
+        <button id="resetBtn" class="btn">Ricomincia</button>
+    </div>
+    
+    <div id="flashcard" class="flashcard">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-type">Cardiovascolare</span>
+                <div class="scenario">
+                    <strong>SCENARIO CLINICO:</strong><br>
+                    Un paziente di 68 anni con storia di infarto miocardico si presenta al pronto soccorso con dispnea progressiva, ortopnea, edema agli arti inferiori e aumento di peso di 3 kg nell'ultima settimana.
+                </div>
+                <div class="question">
+                    Quali segni/sintomi indicherebbero un peggioramento dell'insufficienza cardiaca sinistra che richiede intervento immediato?
+                </div>
+            </div>
+            <div class="card-back">
+                <h3>RISPOSTA:</h3>
+                <p>I segni/sintomi di peggioramento dell'insufficienza cardiaca sinistra che richiedono intervento immediato includono:</p>
+                <ul>
+                    <li>Dispnea a riposo o in rapido peggioramento</li>
+                    <li>Ortopnea severa (necessità di dormire con 3+ cuscini)</li>
+                    <li>Crepitii polmonari all'auscultazione</li>
+                    <li>Distensione delle vene giugulari</li>
+                    <li>Saturazione di ossigeno in calo (&lt;90%)</li>
+                    <li>Tachipnea (&gt;24 respiri/min)</li>
+                    <li>Segni di shock cardiogeno (ipotensione, estremità fredde)</li>
+                </ul>
+                <h4>INTERVENTI PRIORITARI:</h4>
+                <ol>
+                    <li>Posizionamento semi-Fowler</li>
+                    <li>Somministrazione di ossigeno</li>
+                    <li>Monitoraggio dei segni vitali</li>
+                    <li>Diuretici endovena come prescritto</li>
+                    <li>Monitoraggio dell'equilibrio idrico</li>
+                </ol>
+                <p><em>Riferimento: Cap. 4, pag. 87-89</em></p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="navigation">
+        <button id="prevBtn" class="btn">Precedente</button>
+        <button id="nextBtn" class="btn">Successiva</button>
+    </div>
+    
+    <script>
+        // Dati di esempio per le flashcard
+        const flashcards = [
+            {
+                category: "cardiovascolare",
+                type: "Cardiovascolare",
+                scenario: "Un paziente di 68 anni con storia di infarto miocardico si presenta al pronto soccorso con dispnea progressiva, ortopnea, edema agli arti inferiori e aumento di peso di 3 kg nell'ultima settimana.",
+                question: "Quali segni/sintomi indicherebbero un peggioramento dell'insufficienza cardiaca sinistra che richiede intervento immediato?",
+                answer: `<h3>RISPOSTA:</h3>
+                <p>I segni/sintomi di peggioramento dell'insufficienza cardiaca sinistra che richiedono intervento immediato includono:</p>
+                <ul>
+                    <li>Dispnea a riposo o in rapido peggioramento</li>
+                    <li>Ortopnea severa (necessità di dormire con 3+ cuscini)</li>
+                    <li>Crepitii polmonari all'auscultazione</li>
+                    <li>Distensione delle vene giugulari</li>
+                    <li>Saturazione di ossigeno in calo (&lt;90%)</li>
+                    <li>Tachipnea (&gt;24 respiri/min)</li>
+                    <li>Segni di shock cardiogeno (ipotensione, estremità fredde)</li>
+                </ul>
+                <h4>INTERVENTI PRIORITARI:</h4>
+                <ol>
+                    <li>Posizionamento semi-Fowler</li>
+                    <li>Somministrazione di ossigeno</li>
+                    <li>Monitoraggio dei segni vitali</li>
+                    <li>Diuretici endovena come prescritto</li>
+                    <li>Monitoraggio dell'equilibrio idrico</li>
+                </ol>
+                <p><em>Riferimento: Cap. 4, pag. 87-89</em></p>`
+            },
+            {
+                category: "respiratorio",
+                type: "Respiratorio",
+                scenario: "Un paziente di 45 anni con BPCO è ricoverato per un'esacerbazione. Presenta dispnea a riposo, utilizzo dei muscoli accessori e un SpO2 dell'88% in aria ambiente.",
+                question: "Quali sono le priorità assistenziali immediate per questo paziente?",
+                answer: `<h3>RISPOSTA:</h3>
+                <p>Le priorità assistenziali immediate per questo paziente con esacerbazione di BPCO includono:</p>
+                <ul>
+                    <li>Somministrazione di ossigeno a basso flusso (1-2 L/min) per mantenere SpO2 tra 88-92%</li>
+                    <li>Monitoraggio continuo della saturazione e stato respiratorio</li>
+                    <li>Posizionamento in posizione seduta o semi-Fowler per massimizzare l'espansione toracica</li>
+                    <li>Somministrazione di broncodilatatori come prescritto</li>
+                    <li>Valutazione dell'equilibrio acido-base tramite EGA</li>
+                </ul>
+                <p><strong>Attenzione:</strong> L'ossigenoterapia ad alto flusso può sopprimere lo stimolo respiratorio ipossico nei pazienti con BPCO cronica, causando ipoventilazione e ritenzione di CO2.</p>
+                <p><em>Riferimento: Cap. 6, pag. 142-145</em></p>`
+            },
+            {
+                category: "gastrointestinale",
+                type: "Gastrointestinale",
+                scenario: "Un paziente di 52 anni si presenta con dolore addominale acuto nel quadrante superiore destro, nausea, vomito, e febbre di 38.5°C. Gli esami ematici mostrano leucocitosi e aumento degli enzimi epatici.",
+                question: "Quale condizione è più probabile e quali sono gli interventi infermieristici prioritari?",
+                answer: `<h3>RISPOSTA:</h3>
+                <p>La condizione più probabile è la colecistite acuta.</p>
+                <p>Interventi infermieristici prioritari:</p>
+                <ul>
+                    <li>Valutazione e monitoraggio del dolore (scala VAS)</li>
+                    <li>Posizionamento di accesso venoso per terapia idrica e farmaci</li>
+                    <li>Somministrazione di analgesici e antiemetici come prescritto</li>
+                    <li>Monitoraggio dei segni vitali con particolare attenzione a febbre e segni di sepsi</li>
+                    <li>Digiuno e posizionamento di SNG se necessario</li>
+                    <li>Preparazione per eventuali indagini diagnostiche (ecografia addominale)</li>
+                </ul>
+                <p>In caso di colecistite acuta, l'assistenza infermieristica deve prevedere anche il monitoraggio di segni di peritonite o complicanze come perforazione della colecisti.</p>
+                <p><em>Riferimento: Cap. 8, pag. 215-218</em></p>`
+            }
+        ];
+        
+        let currentIndex = 0;
+        let filteredCards = [...flashcards];
+        
+        const flashcardElement = document.getElementById('flashcard');
+        const categorySelector = document.getElementById('categorySelector');
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // Funzione per aggiornare la flashcard visualizzata
+        function updateCard() {
+            if (filteredCards.length === 0) {
+                alert("Nessuna flashcard disponibile per questa categoria");
+                return;
+            }
+            
+            const card = filteredCards[currentIndex];
+            
+            const cardTypeElement = flashcardElement.querySelector('.card-type');
+            const scenarioElement = flashcardElement.querySelector('.scenario');
+            const questionElement = flashcardElement.querySelector('.question');
+            const cardBackElement = flashcardElement.querySelector('.card-back');
+            
+            cardTypeElement.textContent = card.type;
+            scenarioElement.innerHTML = `<strong>SCENARIO CLINICO:</strong><br>${card.scenario}`;
+            questionElement.textContent = card.question;
+            cardBackElement.innerHTML = card.answer;
+            
+            // Assicurarsi che la carta sia tornata sul fronte
+            flashcardElement.classList.remove('flipped');
+        }
+        
+        // Gestione del click sulla flashcard per girarla
+        flashcardElement.addEventListener('click', function() {
+            this.classList.toggle('flipped');
+        });
+        
+        // Gestione del cambio di categoria
+        categorySelector.addEventListener('change', function() {
+            const category = this.value;
+            
+            if (category === 'all') {
+                filteredCards = [...flashcards];
+            } else {
+                filteredCards = flashcards.filter(card => card.category === category);
+            }
+            
+            currentIndex = 0;
+            updateCard();
+        });
+        
+        // Pulsanti di navigazione
+        nextBtn.addEventListener('click', function() {
+            if (currentIndex < filteredCards.length - 1) {
+                currentIndex++;
+                updateCard();
+            }
+        });
+        
+        prevBtn.addEventListener('click', function() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCard();
+            }
+        });
+        
+        // Pulsante di reset
+        resetBtn.addEventListener('click', function() {
+            currentIndex = 0;
+            updateCard();
+        });
+        
+        // Inizializzazione
+        updateCard();
+    </script>
+</body>
+</html>
