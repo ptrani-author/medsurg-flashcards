@@ -4,84 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MEDSURG-BC Flashcards</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #2980b9;
-            --primary-dark: #1c638f;
-            --secondary-color: #e74c3c;
-            --light-bg: #f8f9fa;
-            --dark-text: #2c3e50;
-            --light-text: #ecf0f1;
-            --border-radius: 10px;
-            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: Arial, sans-serif;
             max-width: 900px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f8fa;
-            background-image: linear-gradient(135deg, #f5f8fa 0%, #e6eef1 100%);
-            color: var(--dark-text);
+            background-color: #f5f5f5;
+            color: #333;
             line-height: 1.6;
         }
         
         h1 {
-            color: var(--dark-text);
+            color: #2c3e50;
             text-align: center;
             margin-bottom: 30px;
-            font-size: 2.2rem;
-            position: relative;
-            padding-bottom: 10px;
-        }
-        
-        h1:after {
-            content: '';
-            position: absolute;
-            width: 100px;
-            height: 4px;
-            background: var(--primary-color);
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 2px;
         }
         
         .controls {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 30px;
-            background: white;
-            padding: 15px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
+            margin-bottom: 20px;
         }
         
         .category-selector {
-            padding: 12px 15px;
+            padding: 10px;
             border-radius: 5px;
             border: 1px solid #ddd;
-            width: 250px;
-            font-size: 1rem;
-            color: var(--dark-text);
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            width: 200px;
         }
         
-        .category-selector:focus {
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.2);
-        }
-        
-        /* IMPROVED FLASHCARD STYLING */
+        /* Fixed flashcard structure */
         .flashcard-container {
-            position: relative;
-            width: 100%;
             height: 450px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            position: relative;
         }
         
         .flashcard {
@@ -89,10 +46,10 @@
             width: 100%;
             height: 100%;
             background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            perspective: 1500px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             cursor: pointer;
+            perspective: 1000px;
         }
         
         .card-inner {
@@ -100,7 +57,7 @@
             width: 100%;
             height: 100%;
             text-align: center;
-            transition: transform 0.8s;
+            transition: transform 0.6s;
             transform-style: preserve-3d;
         }
         
@@ -113,65 +70,23 @@
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            border-radius: var(--border-radius);
+            border-radius: 10px;
             overflow: hidden;
         }
         
-        /* IMPROVED FRONT CARD */
+        /* Front card */
         .card-front {
-            display: flex;
-            flex-direction: column;
             z-index: 2;
             background-color: white;
-        }
-        
-        .front-header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 15px;
-            text-align: left;
-            font-weight: 500;
-            font-size: 1.1rem;
-        }
-        
-        .scenario {
-            background-color: #edf7fd;
-            padding: 20px 25px;
-            margin: 0;
-            text-align: left;
-            border-left: 5px solid var(--primary-color);
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-        
-        .scenario-label {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            font-weight: 500;
-        }
-        
-        .question {
-            background-color: var(--dark-text);
-            color: white;
-            font-weight: 500;
-            font-size: 1.3em;
-            padding: 20px 25px;
-            margin: 0;
-            text-align: left;
+            display: flex;
+            flex-direction: column;
         }
         
         .card-type {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            background-color: rgba(52, 152, 219, 0.9);
+            top: 10px;
+            right: 10px;
+            background-color: #3498db;
             color: white;
             padding: 5px 10px;
             border-radius: 15px;
@@ -179,44 +94,58 @@
             z-index: 3;
         }
         
-        /* IMPROVED BACK CARD WITH MOBILE SCROLL FIX */
+        .scenario {
+            background-color: #e9f7fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px;
+            text-align: left;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        
+        .question {
+            font-weight: bold;
+            font-size: 1.2em;
+            padding: 15px;
+            margin-top: auto;
+            background-color: #2c3e50;
+            color: white;
+        }
+        
+        /* Back card - with fixed scrolling */
         .card-back {
             transform: rotateY(180deg);
-            background-color: var(--light-bg);
+            background-color: #f8f9fa;
             z-index: 1;
             display: flex;
             flex-direction: column;
         }
         
         .answer-header {
-            background-color: var(--primary-color);
+            background-color: #3498db;
             color: white;
             padding: 15px;
             font-weight: bold;
             font-size: 1.2em;
             text-align: center;
-            flex-shrink: 0;
         }
         
         .answer-content {
-            padding: 20px 25px;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
-            height: calc(100% - 53px); /* Subtract header height */
-            position: relative;
-        }
-        
-        .answer-section {
-            margin-bottom: 20px;
+            padding: 20px;
+            text-align: left;
+            flex: 1;
+            -webkit-overflow-scrolling: touch;
+            height: calc(100% - 55px);
         }
         
         .section-title {
             font-weight: bold;
-            margin-bottom: 15px;
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 8px;
-            color: var(--dark-text);
-            font-size: 1.1em;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            color: #2c3e50;
         }
         
         .card-back ul, .card-back ol {
@@ -226,53 +155,34 @@
         }
         
         .card-back li {
-            margin-bottom: 10px;
-            line-height: 1.5;
+            margin-bottom: 8px;
+            line-height: 1.4;
         }
         
         .key-term {
             font-weight: bold;
-            color: var(--secondary-color);
+            color: #e74c3c;
         }
         
-        .reference {
-            font-style: italic;
-            color: #7f8c8d;
-            margin-top: 20px;
-            padding-top: 10px;
-            font-size: 0.9em;
-            text-align: right;
-            border-top: 1px dashed #ddd;
-        }
-        
-        /* IMPROVED BUTTONS */
         .btn {
-            background-color: var(--primary-color);
+            background-color: #3498db;
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
             font-size: 1em;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background-color 0.3s;
         }
         
         .btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
+            background-color: #2980b9;
         }
         
         .navigation {
             display: flex;
             justify-content: space-between;
-            margin-top: 25px;
+            margin-top: 20px;
         }
         
         /* Card counter */
@@ -283,30 +193,17 @@
             color: #666;
         }
         
-        /* Click hint */
-        .click-hint {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #888;
-            font-size: 0.8em;
-            opacity: 0.7;
-            width: 100%;
-            text-align: center;
-        }
-        
         /* Responsive adjustments */
         @media (max-width: 768px) {
-            .flashcard-container {
-                height: 500px;
-            }
             .controls {
                 flex-direction: column;
-                gap: 15px;
+                gap: 10px;
             }
             .category-selector {
                 width: 100%;
+            }
+            .flashcard-container {
+                height: 500px;
             }
         }
         
@@ -316,12 +213,6 @@
             }
             .flashcard-container {
                 height: 550px;
-            }
-            .front-header, .question {
-                padding: 15px;
-            }
-            .scenario {
-                padding: 15px;
             }
         }
     </style>
@@ -353,14 +244,12 @@
         <div id="flashcard" class="flashcard">
             <div class="card-inner">
                 <div class="card-front">
-                    <div class="front-header">MEDSURG-BC Certification Question</div>
                     <span class="card-type"></span>
                     <div class="scenario">
-                        <div class="scenario-label">Clinical Scenario</div>
+                        <strong>CLINICAL SCENARIO:</strong><br>
                         <div class="scenario-content"></div>
                     </div>
                     <div class="question"></div>
-                    <div class="click-hint">Click card to see answer</div>
                 </div>
                 <div class="card-back">
                     <div class="answer-header">ANSWER</div>
@@ -410,25 +299,20 @@
         
         // Function to improve answer formatting
         function enhanceAnswerFormat(html) {
-            // Check if the content already has our custom styling
-            if (html.includes('answer-section')) {
-                return html;
-            }
-            
             // Process the original content
             let content = html;
             
             // Replace <h3>ANSWER:</h3> if it exists
             content = content.replace(/<h3>ANSWER:<\/h3>/, '');
             
+            // Format sections (look for patterns like "Immediate Nursing Actions:")
+            const sectionRegex = /([A-Z][A-Za-z\s]+):/g;
+            content = content.replace(sectionRegex, match => 
+                `<div class="section-title">${match.slice(0, -1)}</div>`);
+            
             // Enhance important terms
             const termsToHighlight = [
-                'systemic embolization', 'embolic stroke', 'acute cholecystitis', 
-                'acute ischemic stroke', 'hyperuricemia', 'immediately', 
-                'caution', 'warning', 'remember', 'important', 'critical',
-                'prioritize', 'contraindicated', 'hypokalemia', 'hyponatremia',
-                'hypercalcemia', 'hyperglycemia', 'tension pneumothorax',
-                'cardiovascular', 'respiratory', 'endocrine', 'immune', 'renal'
+                'immediately', 'caution', 'warning', 'remember', 'important', 'critical'
             ];
             
             termsToHighlight.forEach(term => {
@@ -436,19 +320,6 @@
                 content = content.replace(regex, match => 
                     `<span class="key-term">${match}</span>`);
             });
-            
-            // Format sections (look for patterns like "Immediate Nursing Actions:")
-            const sectionRegex = /([A-Z][A-Za-z\s]+):/g;
-            content = content.replace(sectionRegex, match => 
-                `<div class="section-title">${match.slice(0, -1)}</div>`);
-            
-            // Look for references and style them
-            const refRegex = /(Reference:.*|Ch\.\s*\d+.*|pg\..*)/i;
-            const refMatch = html.match(refRegex);
-            if (refMatch) {
-                content = content.replace(refMatch[0], '');
-                content += `<p class="reference">${refMatch[0]}</p>`;
-            }
             
             return content;
         }
@@ -482,21 +353,50 @@
             flashcardElement.classList.remove('flipped');
         }
         
-        // Fix for mobile scrolling
+        // Fix for scrolling issues
+        let touchStartY = 0;
+        let scrolling = false;
+        
+        // Handle mobile scrolling without flipping
         document.addEventListener('touchstart', function(e) {
-            const answerContent = document.querySelector('.answer-content');
             if (e.target.closest('.answer-content') || e.target.closest('.scenario')) {
-                e.stopPropagation();
+                const touch = e.touches[0];
+                touchStartY = touch.clientY;
+                scrolling = false;
             }
         }, {passive: true});
         
-        // Handle card flipping when clicked
+        document.addEventListener('touchmove', function(e) {
+            if (e.target.closest('.answer-content') || e.target.closest('.scenario')) {
+                const touch = e.touches[0];
+                const deltaY = Math.abs(touch.clientY - touchStartY);
+                
+                if (deltaY > 10) {
+                    scrolling = true;
+                }
+            }
+        }, {passive: true});
+        
+        // Handle card flipping
         flashcardElement.addEventListener('click', function(e) {
-            // Don't flip if clicking on scrollable content
+            if (scrolling) {
+                scrolling = false;
+                return;
+            }
+            
+            // Don't flip if clicking scrollable content
             if (e.target.closest('.answer-content') || e.target.closest('.scenario')) {
                 return;
             }
+            
             this.classList.toggle('flipped');
+        });
+        
+        // Stop propagation on scrollable content
+        document.querySelectorAll('.answer-content, .scenario').forEach(el => {
+            el.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
         });
         
         // Handle category selection changes
