@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEDSURG-BC Flashcard</title>
+    <title>MEDSURG-BC Flashcards</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -47,6 +47,7 @@
             position: relative;
             width: 100%;
             height: 100%;
+            min-height: 300px;
             text-align: center;
             transition: transform 0.6s;
             transform-style: preserve-3d;
@@ -68,12 +69,14 @@
         .card-front {
             display: flex;
             flex-direction: column;
+            z-index: 2;
         }
         
         .card-back {
             transform: rotateY(180deg);
             background-color: #f8f9fa;
             overflow-y: auto;
+            z-index: 1;
         }
         
         .scenario {
@@ -127,30 +130,33 @@
             .flashcard {
                 min-height: 400px;
             }
+            .card-inner {
+                min-height: 400px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>MEDSURG-BC Flashcard</h1>
+    <h1>MEDSURG-BC Flashcards</h1>
     
     <div class="controls">
         <select id="categorySelector" class="category-selector">
-            <option value="all">Tutte le categorie</option>
-            <option value="cardiovascular">Sistema Cardiovascolare</option>
-            <option value="respiratory">Sistema Respiratorio</option>
-            <option value="gastrointestinal">Sistema Gastrointestinale</option>
-            <option value="renal">Sistema Renale</option>
-            <option value="reproductive">Sistema Riproduttivo</option>
-            <option value="endocrine">Sistema Endocrino</option>
-            <option value="integumentary">Sistema Tegumentario</option>
-            <option value="musculoskeletal">Sistema Muscoloscheletrico</option>
-            <option value="immune">Sistema Immunitario</option>
-            <option value="nervous">Sistema Nervoso</option>
-            <option value="assessment">Valutazione Infermieristica</option>
-            <option value="fluids">Fluidi ed Elettroliti</option>
-            <option value="pharmacology">Farmacologia</option>
+            <option value="all">All categories</option>
+            <option value="cardiovascular">Cardiovascular System</option>
+            <option value="respiratory">Respiratory System</option>
+            <option value="gastrointestinal">Gastrointestinal System</option>
+            <option value="renal">Renal System</option>
+            <option value="reproductive">Reproductive System</option>
+            <option value="endocrine">Endocrine System</option>
+            <option value="integumentary">Integumentary System</option>
+            <option value="musculoskeletal">Musculoskeletal System</option>
+            <option value="immune">Immune System</option>
+            <option value="nervous">Nervous System</option>
+            <option value="assessment">Nursing Assessment & Vital Signs</option>
+            <option value="fluids">Fluids & Electrolytes</option>
+            <option value="pharmacology">Pharmacology</option>
         </select>
-        <button id="resetBtn" class="btn">Ricomincia</button>
+        <button id="resetBtn" class="btn">Restart</button>
     </div>
     
     <div id="flashcard" class="flashcard">
@@ -165,15 +171,15 @@
     </div>
     
     <div class="navigation">
-        <button id="prevBtn" class="btn">Precedente</button>
-        <button id="nextBtn" class="btn">Successiva</button>
+        <button id="prevBtn" class="btn">Previous</button>
+        <button id="nextBtn" class="btn">Next</button>
     </div>
     
-    <!-- Prima carica i file delle flashcard esterni -->
+    <!-- Load flashcard data files -->
     <script src="flashcards-batch1.js"></script>
     <script src="flashcards.js"></script>
     
-    <!-- Poi esegui lo script principale -->
+    <!-- Main script -->
     <script>
         let currentIndex = 0;
         let filteredCards = [...flashcards];
@@ -184,10 +190,10 @@
         const prevBtn = document.getElementById('prevBtn');
         const resetBtn = document.getElementById('resetBtn');
         
-        // Funzione per aggiornare la flashcard visualizzata
+        // Function to update the displayed flashcard
         function updateCard() {
             if (filteredCards.length === 0) {
-                alert("Nessuna flashcard disponibile per questa categoria");
+                alert("No flashcards available for this category");
                 return;
             }
             
@@ -199,20 +205,20 @@
             const cardBackElement = flashcardElement.querySelector('.card-back');
             
             cardTypeElement.textContent = card.type;
-            scenarioElement.innerHTML = `<strong>SCENARIO CLINICO:</strong><br>${card.scenario}`;
+            scenarioElement.innerHTML = `<strong>CLINICAL SCENARIO:</strong><br>${card.scenario}`;
             questionElement.textContent = card.question;
             cardBackElement.innerHTML = card.answer;
             
-            // Assicurarsi che la carta sia tornata sul fronte
+            // Make sure the card is showing the front
             flashcardElement.classList.remove('flipped');
         }
         
-        // Gestione del click sulla flashcard per girarla
+        // Handle card flipping when clicked
         flashcardElement.addEventListener('click', function() {
             this.classList.toggle('flipped');
         });
         
-        // Gestione del cambio di categoria
+        // Handle category selection changes
         categorySelector.addEventListener('change', function() {
             const category = this.value;
             
@@ -226,7 +232,7 @@
             updateCard();
         });
         
-        // Pulsanti di navigazione
+        // Navigation buttons
         nextBtn.addEventListener('click', function() {
             if (currentIndex < filteredCards.length - 1) {
                 currentIndex++;
@@ -241,14 +247,16 @@
             }
         });
         
-        // Pulsante di reset
+        // Reset button
         resetBtn.addEventListener('click', function() {
             currentIndex = 0;
             updateCard();
         });
         
-        // Inizializzazione
-        updateCard();
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCard();
+        });
     </script>
 </body>
 </html>
