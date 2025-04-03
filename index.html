@@ -14,7 +14,6 @@
             background-color: #f5f8fa;
             color: #333;
             line-height: 1.6;
-            touch-action: pan-y;
         }
         
         h1 {
@@ -125,8 +124,6 @@
             position: relative;
             border-left: 5px solid #3498db;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            touch-action: pan-y;
         }
         
         .scenario-label {
@@ -148,14 +145,15 @@
             border-radius: 10px;
         }
         
-        /* Back card with better styling */
+        /* Back card with FIXED SCROLLING - CRITICAL CHANGE */
         .card-back {
             transform: rotateY(180deg);
-            background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+            background: white;
             z-index: 1;
+            border: 1px solid #e6e6e6;
             display: flex;
             flex-direction: column;
-            border: 1px solid #e6e6e6;
+            height: 100%; /* Ensure full height */
         }
         
         .answer-header {
@@ -165,24 +163,28 @@
             font-weight: bold;
             font-size: 1.3em;
             text-align: center;
+            flex-shrink: 0; /* Prevent header from shrinking */
         }
         
-        /* IMPROVED MOBILE SCROLLING */
+        /* CRITICAL FIX FOR MOBILE SCROLLING */
+        .content-wrapper {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            height: calc(100% - 65px); /* Full height minus header */
+        }
+        
         .answer-content {
-            overflow-y: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow-y: scroll; /* Force scroll, not auto */
+            -webkit-overflow-scrolling: touch; /* iOS scrolling */
             padding: 25px 30px;
             text-align: left;
-            flex: 1;
-            -webkit-overflow-scrolling: touch;
-            height: calc(100% - 65px); /* Account for header height */
-            touch-action: pan-y;
-            position: relative;
-            z-index: 10;
-        }
-        
-        /* Make answer content handle its own events */
-        .answer-content * {
-            touch-action: pan-y;
+            overscroll-behavior: contain; /* Prevent pull-to-refresh */
         }
         
         .section-title {
@@ -269,22 +271,6 @@
             z-index: 5;
         }
         
-        /* Flip area - to separate scrolling from flipping */
-        .flip-area {
-            position: absolute;
-            width: 100%;
-            height: 70px; /* Size of clickable area for flipping */
-            top: 0;
-            left: 0;
-            z-index: 20;
-            cursor: pointer;
-        }
-        
-        .back-flip-area {
-            top: auto;
-            bottom: 0;
-        }
-        
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .controls {
@@ -334,9 +320,7 @@
         <div id="flashcard" class="flashcard">
             <div class="card-inner">
                 <div class="card-front">
-                    <!-- Added specific flip area -->
-                    <div class="flip-area" id="frontFlipArea"></div>
-                    <div class="front-header">MEDSURG-BC Question</div>
+                    <div class="front-header" id="frontHeader">MEDSURG-BC Question</div>
                     <span class="card-type"></span>
                     <div class="scenario">
                         <span class="scenario-label">CLINICAL SCENARIO</span>
@@ -346,11 +330,12 @@
                     <div class="flip-hint">Click to see answer</div>
                 </div>
                 <div class="card-back">
-                    <!-- Added specific flip area -->
-                    <div class="flip-area back-flip-area" id="backFlipArea"></div>
-                    <div class="answer-header">ANSWER</div>
-                    <div class="answer-content"></div>
-                    <div class="flip-hint">Click to return to question</div>
+                    <div class="answer-header" id="backHeader">ANSWER</div>
+                    <!-- NEW WRAPPER FOR PROPER SCROLLING -->
+                    <div class="content-wrapper">
+                        <div class="answer-content" id="answerContent"></div>
+                    </div>
+                    <div class="flip-hint" id="backFlipHint">Click to return to question</div>
                 </div>
             </div>
         </div>
@@ -387,8 +372,10 @@
         let filteredCards = [...flashcards];
         
         const flashcardElement = document.getElementById('flashcard');
-        const frontFlipArea = document.getElementById('frontFlipArea');
-        const backFlipArea = document.getElementById('backFlipArea');
+        const frontHeader = document.getElementById('frontHeader');
+        const backHeader = document.getElementById('backHeader');
+        const backFlipHint = document.getElementById('backFlipHint');
+        const answerContent = document.getElementById('answerContent');
         const categorySelector = document.getElementById('categorySelector');
         const nextBtn = document.getElementById('nextBtn');
         const prevBtn = document.getElementById('prevBtn');
@@ -437,14 +424,13 @@
             const cardTypeElement = flashcardElement.querySelector('.card-type');
             const scenarioContentElement = flashcardElement.querySelector('.scenario-content');
             const questionElement = flashcardElement.querySelector('.question');
-            const answerContentElement = flashcardElement.querySelector('.answer-content');
             
             cardTypeElement.textContent = card.type;
             scenarioContentElement.innerHTML = card.scenario;
             questionElement.textContent = card.question;
             
             // Apply enhanced formatting to the answer
-            answerContentElement.innerHTML = enhanceAnswerFormat(card.answer);
+            answerContent.innerHTML = enhanceAnswerFormat(card.answer);
             
             // Update card counter
             currentCardNumElement.textContent = currentIndex + 1;
@@ -454,53 +440,24 @@
             flashcardElement.classList.remove('flipped');
         }
         
-        // IMPROVED: Mobile-friendly flip handling
-        // Only flip when clicking the flip areas, not content
-        frontFlipArea.addEventListener('click', function(e) {
-            e.stopPropagation();
+        // SIMPLER FLIPPING LOGIC
+        // Flip to back
+        frontHeader.addEventListener('click', function() {
             flashcardElement.classList.add('flipped');
-        });
-        
-        backFlipArea.addEventListener('click', function(e) {
-            e.stopPropagation();
-            flashcardElement.classList.remove('flipped');
-        });
-        
-        // Alternative flip methods for better usability
-        document.querySelector('.front-header').addEventListener('click', function() {
-            flashcardElement.classList.add('flipped');
-        });
-        
-        document.querySelector('.answer-header').addEventListener('click', function() {
-            flashcardElement.classList.remove('flipped');
         });
         
         document.querySelector('.flip-hint').addEventListener('click', function() {
             flashcardElement.classList.add('flipped');
         });
         
-        document.querySelectorAll('.flip-hint')[1].addEventListener('click', function() {
+        // Flip to front
+        backHeader.addEventListener('click', function() {
             flashcardElement.classList.remove('flipped');
         });
         
-        // Stop propagation for scrollable content
-        function setupScrollArea(element) {
-            if (!element) return;
-            
-            // Prevent default on touchmove to allow scrolling
-            element.addEventListener('touchmove', function(e) {
-                e.stopPropagation();
-            }, { passive: true });
-            
-            // Prevent click from propagating
-            element.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-        }
-        
-        // Setup scrollable areas
-        setupScrollArea(document.querySelector('.answer-content'));
-        setupScrollArea(document.querySelector('.scenario'));
+        backFlipHint.addEventListener('click', function() {
+            flashcardElement.classList.remove('flipped');
+        });
         
         // Handle category selection changes
         categorySelector.addEventListener('change', function() {
@@ -540,12 +497,6 @@
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             updateCard();
-            
-            // Add tap to flip hint on mobile
-            if ('ontouchstart' in window) {
-                document.querySelector('.flip-hint').textContent = 'Tap header to flip';
-                document.querySelectorAll('.flip-hint')[1].textContent = 'Tap header to flip back';
-            }
         });
     </script>
 </body>
