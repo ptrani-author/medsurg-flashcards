@@ -14,6 +14,7 @@
             background-color: #f5f8fa;
             color: #333;
             line-height: 1.6;
+            touch-action: pan-y;
         }
         
         h1 {
@@ -123,6 +124,9 @@
             box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
             position: relative;
             border-left: 5px solid #3498db;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
         }
         
         .scenario-label {
@@ -163,6 +167,7 @@
             text-align: center;
         }
         
+        /* IMPROVED MOBILE SCROLLING */
         .answer-content {
             overflow-y: auto;
             padding: 25px 30px;
@@ -170,6 +175,14 @@
             flex: 1;
             -webkit-overflow-scrolling: touch;
             height: calc(100% - 65px); /* Account for header height */
+            touch-action: pan-y;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Make answer content handle its own events */
+        .answer-content * {
+            touch-action: pan-y;
         }
         
         .section-title {
@@ -256,6 +269,22 @@
             z-index: 5;
         }
         
+        /* Flip area - to separate scrolling from flipping */
+        .flip-area {
+            position: absolute;
+            width: 100%;
+            height: 70px; /* Size of clickable area for flipping */
+            top: 0;
+            left: 0;
+            z-index: 20;
+            cursor: pointer;
+        }
+        
+        .back-flip-area {
+            top: auto;
+            bottom: 0;
+        }
+        
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .controls {
@@ -305,6 +334,8 @@
         <div id="flashcard" class="flashcard">
             <div class="card-inner">
                 <div class="card-front">
+                    <!-- Added specific flip area -->
+                    <div class="flip-area" id="frontFlipArea"></div>
                     <div class="front-header">MEDSURG-BC Question</div>
                     <span class="card-type"></span>
                     <div class="scenario">
@@ -315,6 +346,8 @@
                     <div class="flip-hint">Click to see answer</div>
                 </div>
                 <div class="card-back">
+                    <!-- Added specific flip area -->
+                    <div class="flip-area back-flip-area" id="backFlipArea"></div>
                     <div class="answer-header">ANSWER</div>
                     <div class="answer-content"></div>
                     <div class="flip-hint">Click to return to question</div>
@@ -354,6 +387,8 @@
         let filteredCards = [...flashcards];
         
         const flashcardElement = document.getElementById('flashcard');
+        const frontFlipArea = document.getElementById('frontFlipArea');
+        const backFlipArea = document.getElementById('backFlipArea');
         const categorySelector = document.getElementById('categorySelector');
         const nextBtn = document.getElementById('nextBtn');
         const prevBtn = document.getElementById('prevBtn');
@@ -419,10 +454,53 @@
             flashcardElement.classList.remove('flipped');
         }
         
-        // SIMPLIFIED flip handling that works reliably
-        flashcardElement.addEventListener('click', function() {
-            this.classList.toggle('flipped');
+        // IMPROVED: Mobile-friendly flip handling
+        // Only flip when clicking the flip areas, not content
+        frontFlipArea.addEventListener('click', function(e) {
+            e.stopPropagation();
+            flashcardElement.classList.add('flipped');
         });
+        
+        backFlipArea.addEventListener('click', function(e) {
+            e.stopPropagation();
+            flashcardElement.classList.remove('flipped');
+        });
+        
+        // Alternative flip methods for better usability
+        document.querySelector('.front-header').addEventListener('click', function() {
+            flashcardElement.classList.add('flipped');
+        });
+        
+        document.querySelector('.answer-header').addEventListener('click', function() {
+            flashcardElement.classList.remove('flipped');
+        });
+        
+        document.querySelector('.flip-hint').addEventListener('click', function() {
+            flashcardElement.classList.add('flipped');
+        });
+        
+        document.querySelectorAll('.flip-hint')[1].addEventListener('click', function() {
+            flashcardElement.classList.remove('flipped');
+        });
+        
+        // Stop propagation for scrollable content
+        function setupScrollArea(element) {
+            if (!element) return;
+            
+            // Prevent default on touchmove to allow scrolling
+            element.addEventListener('touchmove', function(e) {
+                e.stopPropagation();
+            }, { passive: true });
+            
+            // Prevent click from propagating
+            element.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+        
+        // Setup scrollable areas
+        setupScrollArea(document.querySelector('.answer-content'));
+        setupScrollArea(document.querySelector('.scenario'));
         
         // Handle category selection changes
         categorySelector.addEventListener('change', function() {
@@ -462,6 +540,12 @@
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             updateCard();
+            
+            // Add tap to flip hint on mobile
+            if ('ontouchstart' in window) {
+                document.querySelector('.flip-hint').textContent = 'Tap header to flip';
+                document.querySelectorAll('.flip-hint')[1].textContent = 'Tap header to flip back';
+            }
         });
     </script>
 </body>
